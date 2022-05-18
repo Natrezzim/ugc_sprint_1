@@ -64,6 +64,7 @@ internet <----> api
 api <----> auth_nginx
 api <----> asyncapi_nginx
 api <----> ugc_nginx
+auth_nginx <-[#800080]> asyncapi_app
 
 ap_db_pg <---> fts_etl
 asyncapi_app <--- fts_elastic

@@ -9,6 +9,9 @@ actor "Менеджеры" as manager
 cloud "Интернет" as internet{
 }
 
+cloud "Интернет" as manager_internet{
+}
+
 node "API" as api{
 }
 
@@ -64,13 +67,13 @@ internet <----> api
 api <----> auth_nginx
 api <----> asyncapi_nginx
 api <----> ugc_nginx
-auth_nginx <-[#800080]> asyncapi_app
+auth_nginx <-[#800080]> asyncapi_app : <size:16><i><b>gRPC</b></i></size>\n
 
 ap_db_pg <---> fts_etl
 asyncapi_app <--- fts_elastic
 
-manager <-[#4567ff]-> internet
-internet <-[#4567ff]---> ap_nginx
+manager <--> manager_internet
+manager_internet <----> ap_nginx
 
 
 

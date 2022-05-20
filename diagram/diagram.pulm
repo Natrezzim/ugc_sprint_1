@@ -12,7 +12,7 @@ cloud "Интернет" as internet{
 cloud "Интернет" as manager_internet{
 }
 
-node "Балансировщик" as api{
+node "API Gateway" as api{
 }
 
 node "Admin panel" as admin_panel {

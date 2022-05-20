@@ -66,7 +66,7 @@ user <--> internet
 internet <----> api
 api <----> auth_nginx
 api <----> asyncapi_nginx
-api <----> ugc_nginx
+ugc_nginx <-> asyncapi_app
 auth_nginx <-[#800080]> asyncapi_app : <size:16><i><b>gRPC</b></i></size>\n
 
 ap_db_pg <---> fts_etl

@@ -16,7 +16,6 @@
 
 Инфрастуктура
 -
-Kafka доступен по адресу http://localhost:9021/
 Clickhouse доступен по адресу http://localhost:8123/play
 Документация    
 API

@@ -46,9 +46,11 @@ component "Flask app" as auth_flask_app
 database "PostgreSQL" as auth_db_pg
 database "Redis" as auth_db_redis
 component "Nginx" as auth_nginx
+component "gRPC" as auth_grpc
 auth_flask_app <--> auth_db_pg
 auth_flask_app <--> auth_db_redis
 auth_nginx <--> auth_flask_app
+auth_grpc <---> auth_db_pg
 }
 
 node "UGC" as ugc{
@@ -67,7 +69,7 @@ internet <----> api
 api <----> auth_nginx
 api <----> asyncapi_nginx
 api <----> ugc_nginx
-auth_nginx <-[#800080]> asyncapi_app : <size:16><i><b>gRPC</b></i></size>\n
+auth_grpc <-[#800080]> asyncapi_app : <size:16><i><b>gRPC</b></i></size>\n
 
 ap_db_pg <---> fts_etl
 asyncapi_app <--- fts_elastic

@@ -12,7 +12,7 @@ cloud "Интернет" as internet{
 cloud "Интернет" as manager_internet{
 }
 
-node "API" as api{
+node "Балансировщик" as api{
 }
 
 node "Admin panel" as admin_panel {
@@ -66,7 +66,7 @@ user <--> internet
 internet <----> api
 api <----> auth_nginx
 api <----> asyncapi_nginx
-ugc_nginx <- asyncapi_app
+api <----> ugc_nginx
 auth_nginx <-[#800080]> asyncapi_app : <size:16><i><b>gRPC</b></i></size>\n
 
 ap_db_pg <---> fts_etl

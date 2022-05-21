@@ -1,6 +1,6 @@
 from typing import Optional
 
-from app.utils.producer import AIOProducer
+from utils.producer import AIOProducer
 
 aio_producer: Optional[AIOProducer] = None
 

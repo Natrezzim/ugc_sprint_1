@@ -4,4 +4,5 @@ uvloop==0.16.0
 orjson==3.6.7
 confluent_kafka==1.8.2
 PyJWT==2.4.0
-
+backoff==2.0.1
+kafka-python==2.0.2

@@ -9,6 +9,10 @@ services:
       - "8010:8010"
     env_file:
       - ./src/api/app/.env
+    entrypoint: /usr/local/bin/entrypoint.sh
+    depends_on:
+      - kafka
+      - zookeeper
 
   nginx:
     container_name: ugc_nginx
@@ -58,6 +62,7 @@ services:
       KAFKA_CREATE_TOPICS: "views"
     volumes:
       - ugc_kafka:/var/lib/kafka/data
+
   clickhouse-server:
     image: yandex/clickhouse-server
     ports:

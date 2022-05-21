@@ -17,4 +17,6 @@ RUN pip install -r requirements.txt
 EXPOSE 8010
 
 COPY app ./app
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8010"]
+COPY wait-for-kafka.py  .
+COPY entrypoint.sh  /usr/local/bin/
+

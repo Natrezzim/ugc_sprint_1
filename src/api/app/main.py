@@ -2,10 +2,10 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
-from api.v1 import view_film
-from core.config import Settings
-from db import kafka_producer
-from utils.producer import AIOProducer
+from app.api.v1 import view_film
+from app.core.config import Settings
+from app.db import kafka_producer
+from app.utils.producer import AIOProducer
 
 settings = Settings()
 app = FastAPI(
@@ -37,6 +37,7 @@ async def shutdown():
 
 app.include_router(view_film.router, prefix='/api/v1/view_film')
 
+print(settings)
 
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=8000)

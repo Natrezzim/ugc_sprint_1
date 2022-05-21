@@ -5,9 +5,9 @@ from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPBasicCredentials
 from pydantic import BaseModel
 
-from db.kafka_producer import get_producer
-from service.auth import Auth
-from utils.producer import AIOProducer
+from app.db.kafka_producer import get_producer
+from app.service.auth import Auth
+from app.utils.producer import AIOProducer
 
 security = HTTPBearer()
 auth_handler = Auth()
@@ -21,11 +21,11 @@ class Viewed(BaseModel):
 
 
 @router.post('/',
-            summary='Добавление данных по фильму',
-            description='Добавление статистики, просмотра фильма',
-            response_description='Id, название, рейтинг, описание, жары, '
-                                 'актеры, сценаристы, режиссеры фильма.',
-            tags=['viewed']
+             summary='Добавление данных по фильму',
+             description='Добавление статистики, просмотра фильма',
+             response_description='Id, название, рейтинг, описание, жары, '
+                                  'актеры, сценаристы, режиссеры фильма.',
+             tags=['viewed']
              )
 async def film_views(
         viewed: Viewed,

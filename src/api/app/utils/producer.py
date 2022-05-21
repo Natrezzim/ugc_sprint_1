@@ -1,7 +1,8 @@
-from confluent_kafka import KafkaException
 import asyncio
-import confluent_kafka
 from threading import Thread
+
+import confluent_kafka
+from confluent_kafka import KafkaException
 
 
 class AIOProducer:
@@ -31,5 +32,6 @@ class AIOProducer:
                 self._loop.call_soon_threadsafe(result.set_exception, KafkaException(err))
             else:
                 self._loop.call_soon_threadsafe(result.set_result, msg)
+
         self._producer.produce(topic, key=key, value=value, on_delivery=ack)
         return result

@@ -5,7 +5,7 @@ WORKDIR /usr/src
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 RUN apk update && \
-    apk add build-base && \
+    apk add build-base librdkafka-dev && \
     apk --no-cache add curl && \
     pip install --upgrade pip && \
     pip install -U setuptools

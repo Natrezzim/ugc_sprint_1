@@ -1,13 +1,13 @@
 import jwt
 from fastapi import HTTPException
 
-from core.config import Settings
+from app.core.config import Settings
 
 settings = Settings()
 
 
 class Auth:
-    secret = settings.jwt_secret
+    secret = settings.jwt_secret_key
 
     def decode_token(self, token):
         try:

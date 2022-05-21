@@ -38,6 +38,8 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - 22181:2181
+    volumes:
+      - ugc_zookeeper:/data
 
   kafka:
     container_name: ugc_kafka
@@ -53,13 +55,14 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-
+    volumes:
+      - ugc_kafka:/var/lib/kafka/data
   clickhouse-server:
     image: yandex/clickhouse-server
     ports:
       - "8123:8123"
     volumes:
-      - clickhouse_db:/var/lib/clickhouse
+      - ugc_clickhouse_db:/var/lib/clickhouse
 
   clickhouse-client:
     image: yandex/clickhouse-client
@@ -69,4 +72,6 @@ services:
       - infinity
 
 volumes:
-  clickhouse_db:
+  ugc_clickhouse_db:
+  ugc_kafka:
+  ugc_zookeeper:

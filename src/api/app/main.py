@@ -3,7 +3,6 @@ from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
 from api.v1 import view_film
-from core import config
 from core.config import Settings
 from db import kafka_producer
 from utils.producer import AIOProducer

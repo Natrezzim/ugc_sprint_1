@@ -5,9 +5,9 @@ from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPBasicCredentials
 from pydantic import BaseModel
 
-from db.kafka_producer import get_producer
-from service.auth import Auth
-from utils.producer import AIOProducer
+from app.db.kafka_producer import get_producer
+from app.service.auth import Auth
+from app.utils.producer import AIOProducer
 
 security = HTTPBearer()
 auth_handler = Auth()

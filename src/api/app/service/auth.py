@@ -1,7 +1,7 @@
 import jwt
 from fastapi import HTTPException
 
-from core.config import Settings
+from app.core.config import Settings
 
 settings = Settings()
 

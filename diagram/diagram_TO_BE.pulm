@@ -56,6 +56,12 @@ auth_grpc <---> auth_db_pg
 node "UGC" as ugc{
 component "Nginx" as ugc_nginx
 component "Async app" as ugc_app
+note top of ugc_app
+  1) Проверяет токен на
+  валидность
+  2) Подготавливает и
+  отправляет данные в очередь
+end note
 queue "Kafka" as ugc_kafka
 component "ETL" as ugc_etl
 database "OLAP" as ugc_olap

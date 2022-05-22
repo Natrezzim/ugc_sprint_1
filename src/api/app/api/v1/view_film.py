@@ -37,7 +37,7 @@ async def film_views(
     try:
         await producer.produce(
             "views",
-            key='{}+{}'.format(viewed.movie_id, user_id).encode(),
+            key='{}+{}'.format(user_id, viewed.movie_id).encode(),
             value='{}'.format(viewed.viewed_time).encode()
         )
         return {"saved": 'ok'}

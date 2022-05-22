@@ -32,13 +32,6 @@ def create_test_table():
     """)
 
 
-def get_sample_query():
-    query = """
-        SELECT COUNT(*) FROM example.views
-    """
-
-    return query
-
 def get_insert_query():
 
     query = "INSERT INTO example.views (user_id, movie_id, viewed_frame) VALUES"
@@ -51,25 +44,25 @@ def execute_query(query, data):
     return click_client.execute('SELECT * FROM example.views')
 
 
-class VerticaClient:
+class ClickhouseClient:
     def __getattr__(self, name):
         def wrapper(*args, **kwargs):
             start_time = time.time()
             try:
                 res = execute_query(*args, **kwargs)
-                events.request_success.fire(request_type="vertica",
+                events.request_success.fire(request_type="clickhouse",
                                             name=name,
                                             response_time=int((time.time() - start_time) * 1000),
                                             response_length=len(res))
             except Exception as e:
-                events.request_failure.fire(request_type="vertica",
+                events.request_failure.fire(request_type="clickhouse",
                                             name=name,
                                             response_time=int((time.time() - start_time) * 1000),
                                             exception=e)
         return wrapper
 
 
-class VerticaTaskSet(TaskSet):
+class ClickhouseTaskSet(TaskSet):
 
     @task
     def execute_insert_query(self):
@@ -77,13 +70,13 @@ class VerticaTaskSet(TaskSet):
             self.client.execute_query(get_insert_query(), chunk_data)
 
 
-class VerticaLocust(User):
-    tasks = [VerticaTaskSet]
+class ClickhouseLocust(User):
+    tasks = [ClickhouseTaskSet]
     wait_time = between(0.1, 1)
 
     def __init__(self, environment):
         super().__init__(environment)
-        self.client = VerticaClient()
+        self.client = ClickhouseClient()
 
     def on_start(self):
         create_test_table()

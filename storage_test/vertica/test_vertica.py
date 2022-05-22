@@ -64,7 +64,7 @@ def get_sample_query():
 def get_insert_query():
 
     query = f"""
-        INSERT INTO views(user_id, movie_id, viewed_frame) VALUES(?, ?, ?)
+        INSERT INTO views(user_id, movie_id, viewed_frame) VALUES(%s, %s, %s)
     """
 
     return query
@@ -77,7 +77,7 @@ def execute_query(conn_info, query, data, select=False):
             cur.execute(query)
             return cur.fetchall()
         else:
-            cur.executemany(query, data, use_prepared_statements=True)
+            cur.executemany(query, data, use_prepared_statements=False)
             return [x for x in cur.iterate()]
 
 

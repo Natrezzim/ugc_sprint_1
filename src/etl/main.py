@@ -10,6 +10,8 @@ from config import Settings
 
 settings = Settings()
 
+MESSAGES_COUNT = settings.messages_count
+
 
 def create_table(client) -> None:
     """
@@ -56,7 +58,7 @@ def etl(consumer: KafkaConsumer, clickhouse_client: Client) -> None:
         one_msg.append(str(message.value))
         one_msg.append(str(message.timestamp))
         data.append(one_msg)
-        if len(data) == 1000:
+        if len(data) == MESSAGES_COUNT:
             for i in data:
                 insert_in_clickhouse(clickhouse_client, i)
             data.clear()

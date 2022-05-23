@@ -1,5 +1,5 @@
 import json
-import re
+import uuid
 
 import backoff
 from clickhouse_driver import Client
@@ -41,8 +41,8 @@ def insert_in_clickhouse(client, data: list) -> None:
     client.execute(
         '''
         INSERT INTO views (
-        id, user_id, movie_id, timestamp_movie, time)  VALUES (generateUUIDv4(), {})
-        '''.format(', '.join("'" + i + "'" for i in data)))
+        id, user_id, movie_id, timestamp_movie, time)  VALUES {}
+        '''.format(', '.join(i for i in data)))
 
 
 def etl(consumer: KafkaConsumer, clickhouse_client: Client) -> None:
@@ -54,13 +54,9 @@ def etl(consumer: KafkaConsumer, clickhouse_client: Client) -> None:
     """
     data = []
     for message in consumer:
-        one_msg = re.split("\+", str(message.key.decode('utf-8')))
-        one_msg.append(str(message.value))
-        one_msg.append(str(message.timestamp))
-        data.append(one_msg)
+        data.append(str((str(uuid.uuid4()), *str(message.key.decode('utf-8')).split('+'), message.value, message.timestamp)))
         if len(data) == MESSAGES_COUNT:
-            for i in data:
-                insert_in_clickhouse(clickhouse_client, i)
+            insert_in_clickhouse(clickhouse_client, data)
             data.clear()
             tp = TopicPartition(settings.kafka_topic, message.partition)
             options = {tp: OffsetAndMetadata(message.offset + 1, None)}

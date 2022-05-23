@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from uuid import UUID
 
 from aiokafka import AIOKafkaProducer
@@ -42,4 +43,4 @@ async def film_views(
         return {"saved": 'ok'}
 
     except Exception as ex:
-        raise HTTPException(status_code=500, detail=ex.args[0].str())
+        raise HTTPException(status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail=ex.args[0].str())

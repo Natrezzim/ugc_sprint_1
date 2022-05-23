@@ -1,23 +1,28 @@
+import asyncio
 import os
-from kafka import KafkaConsumer
-from kafka.errors import NoBrokersAvailable
+
 import backoff
+from aiokafka import AIOKafkaConsumer
+from aiokafka.errors import KafkaConnectionError
 
 
-@backoff.on_exception(backoff.expo, NoBrokersAvailable)
-def ping():
+@backoff.on_exception(backoff.expo, KafkaConnectionError)
+async def ping():
+    consumer = AIOKafkaConsumer(
+        'views',
+        bootstrap_servers='{}:{}'.format(
+            os.getenv('KAFKA_HOST'),
+            os.getenv('KAFKA_PORT')
+        ),
+        group_id="test-group"
+    )
+
     try:
-        KafkaConsumer('views',
-                      bootstrap_servers='{}:{}'.format(
-                          os.getenv('KAFKA_HOST'),
-                          os.getenv('KAFKA_PORT')
-                      ))
-    except NoBrokersAvailable as e:
+        await consumer.start()
+    except KafkaConnectionError as e:
         print(e)
-        raise NoBrokersAvailable()
-
-
+        raise KafkaConnectionError()
 
 
 if __name__ == '__main__':
-    ping()
+    asyncio.run(ping())

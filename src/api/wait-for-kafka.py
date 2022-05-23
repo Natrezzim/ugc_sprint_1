@@ -22,6 +22,8 @@ async def ping():
     except KafkaConnectionError as e:
         print(e)
         raise KafkaConnectionError()
+    finally:
+        await consumer.stop()
 
 
 if __name__ == '__main__':

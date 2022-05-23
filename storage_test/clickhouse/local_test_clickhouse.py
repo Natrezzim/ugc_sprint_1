@@ -13,6 +13,10 @@ ROWS_NUMS = 10000000
 CHUNK_SIZE = 5000
 
 
+def average(lst: list):
+    return sum(lst) / len(lst)
+
+
 def query_time(query_type: str):
     def decorator(func):
         def wrapper(*args, **kwargs):
@@ -21,6 +25,9 @@ def query_time(query_type: str):
             res = func(*args, **kwargs)
 
             query_time_result = time.monotonic() - start_time
+            if query_type == 'SELECT':
+                return query_time_result
+
             print(f"Query type {query_type}, query_time {query_time_result}")
 
             return res
@@ -42,11 +49,10 @@ def clickhouse_test():
 
     @query_time("SELECT")
     def select_from_clickhouse(client: Client):
-        for i in range(CHUNK_SIZE):
-            random_id = random.randint(1, ROWS_NUMS)
-            client.execute(
-                f"SELECT * FROM example.views WHERE (user_id == {random_id})"
-            )
+        random_id = random.randint(1, ROWS_NUMS)
+        client.execute(
+            f"SELECT * FROM example.views WHERE (user_id == {random_id})"
+        )
 
     client = Client(host='localhost')
     client.execute(
@@ -60,7 +66,14 @@ def clickhouse_test():
 
     insert_to_clickhouse(client=client)
 
-    select_from_clickhouse(client=client)
+    # select данных из clickhouse
+    # результатом исследования является среднее время получения рандомного значения при 5К запросах
+    # из таблицы в 10M записей
+    time_for_each_query = []
+    for i in range(CHUNK_SIZE):
+        time_for_each_query.append(select_from_clickhouse(client=client))
+
+    print(f"Query type SELECT, avg query_time {average(time_for_each_query)}")
 
 
 if __name__ == "__main__":

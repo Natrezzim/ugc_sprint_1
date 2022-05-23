@@ -1,13 +1,12 @@
 from uuid import UUID
 
-from confluent_kafka import KafkaException
+from aiokafka import AIOKafkaProducer
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPBasicCredentials
 from pydantic import BaseModel
 
 from app.db.kafka_producer import get_producer
 from app.service.auth import Auth
-from app.utils.producer import AIOProducer
 
 security = HTTPBearer()
 auth_handler = Auth()
@@ -29,18 +28,18 @@ class Viewed(BaseModel):
              )
 async def film_views(
         viewed: Viewed,
-        producer: AIOProducer = Depends(get_producer),
+        producer: AIOKafkaProducer = Depends(get_producer),
         credentials: HTTPBasicCredentials = Depends(security)
 ):
     token = credentials.credentials
     user_id = auth_handler.decode_token(token)
     try:
-        await producer.produce(
+        await producer.send_and_wait(
             "views",
             key='{}+{}'.format(user_id, viewed.movie_id).encode(),
             value='{}'.format(viewed.viewed_time).encode()
         )
         return {"saved": 'ok'}
 
-    except KafkaException as ex:
+    except Exception as ex:
         raise HTTPException(status_code=500, detail=ex.args[0].str())

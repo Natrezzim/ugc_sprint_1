@@ -1,11 +1,11 @@
 import uvicorn
+from aiokafka import AIOKafkaProducer
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
 from app.api.v1 import view_film
 from app.core.config import Settings
 from app.db import kafka_producer
-from app.utils.producer import AIOProducer
 
 settings = Settings()
 app = FastAPI(
@@ -23,20 +23,20 @@ app = FastAPI(
 
 @app.on_event('startup')
 async def startup():
-    kafka_producer.aio_producer = AIOProducer(
-        {
-            'bootstrap.servers': '{}:{}'.format(settings.kafka_host, settings.kafka_port)
+    kafka_producer.aio_producer = AIOKafkaProducer(
+        **{
+            'bootstrap_servers': '{}:{}'.format(settings.kafka_host, settings.kafka_port)
         }
     )
+    await kafka_producer.aio_producer.start()
 
 
 @app.on_event('shutdown')
 async def shutdown():
-    kafka_producer.aio_producer.close()
+    await kafka_producer.aio_producer.stop()
 
 
 app.include_router(view_film.router, prefix='/api/v1/view_film')
-
 
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=8000)

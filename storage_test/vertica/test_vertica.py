@@ -75,10 +75,8 @@ def execute_query(conn_info, query, data, select=False):
         cur = conn.cursor()
         if select:
             cur.execute(query)
-            return cur.fetchall()
         else:
             cur.executemany(query, data, use_prepared_statements=False)
-            return [x for x in cur.iterate()]
 
 
 class VerticaClient:
@@ -87,12 +85,12 @@ class VerticaClient:
         def wrapper(*args, **kwargs):
             start_time = time.time()
             try:
-                res = execute_query(*args, **kwargs)
+                execute_query(*args, **kwargs)
                 events.request_success.fire(
                     request_type="vertica",
                     name=name,
                     response_time=int((time.time() - start_time) * 1000),
-                    response_length=len(res),
+                    response_length=0,
                 )
             except Exception as e:
                 events.request_failure.fire(

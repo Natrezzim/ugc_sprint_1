@@ -54,7 +54,8 @@ def etl(consumer: KafkaConsumer, clickhouse_client: Client) -> None:
     """
     data = []
     for message in consumer:
-        data.append(str((str(uuid.uuid4()), *str(message.key.decode('utf-8')).split('+'), message.value, message.timestamp)))
+        one_msg = (str(uuid.uuid4()), *str(message.key.decode('utf-8')).split('+'), message.value, message.timestamp)
+        data.append(str(one_msg))
         if len(data) == MESSAGES_COUNT:
             insert_in_clickhouse(clickhouse_client, data)
             data.clear()
